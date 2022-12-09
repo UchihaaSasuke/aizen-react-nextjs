@@ -4,6 +4,7 @@ import { CssBaseline } from "@material-ui/core";
 import PokemonInfo from "../components/PokemonInfo";
 import PokemonFilter from "../components/PokemonFilter";
 import PokemonTable from "../components/PokemonTable";
+import store from "../src/store";
 
 const Title = styled.h1`
   text-align: center;
@@ -19,7 +20,19 @@ const TwoColumnLayout = styled.div`
   grid-column-gap: 1rem;
 `;
 
-export default function Home() {
+export async function getServerSideProps() {
+  const pokemon = await (
+    await fetch("http://localhost:3000/pokemon.json")
+  ).json();
+  return {
+    props: {
+      pokemon,
+    }, // will be passed to the page component as props
+  };
+}
+
+export default function Home({ pokemon }) {
+  store.setPokemon(pokemon);
   return (
     <PageContainer>
       <CssBaseline />
