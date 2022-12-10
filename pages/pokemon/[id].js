@@ -16,11 +16,21 @@ const PageContainer = styled.div`
   padding-top: 1em;
 `;
 
-export async function getServerSideProps(context) {
-  const allPokemon = await (
-    await fetch("http://localhost:3000/pokemon.json")
-  ).json();
-  const pokemon = allPokemon.find(({ id }) => context.query.id == id);
+export async function getStaticPaths() {
+  const allPokemon = require("../../src/pokemon.json");
+  return {
+    paths: allPokemon.map((p) => ({
+      params: {
+        id: p.id.toString(),
+      },
+    })),
+    fallback: false, // can also be true or 'blocking'
+  };
+}
+
+export async function getStaticProps(context) {
+  const allPokemon = require("../../src/pokemon.json");
+  const pokemon = allPokemon.find(({ id }) => context.params.id == id);
   return {
     props: {
       pokemon,
